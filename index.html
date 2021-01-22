@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ul {
+            list-style: none;
+            overflow: auto;
+        }
+
+        .contain {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .video {}
+
+        .list {
+            word-break: break-all;
+        }
+
+        .list li span {
+            font-size: 24px;
+        }
+
+        .on {
+            color: #f00
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="contain">
+            <div class="video">
+                <video :src="curr" style="width: 100%" controls ref="video"></video>
+            </div>
+            <ul class="list">
+                <li v-for="(item, index) in list" :key="item">
+                    <a href="javascript:;" @click="handleSelct(item)">
+                        <span>{{index}}:</span> {{decodeURIComponent(item)}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.js"></script>
+    <!-- <script src="https://unpkg.com/shaka-player"></script> -->
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                list: [],
+                curr: '',
+                video: null,
+            },
+            filters: {
+                videoName(value) {
+                    return value.match(/\/(.*)(?<=\.mp4)/g)[0]
+                }
+            },
+            methods: {
+                async init() {
+                    const list = await fetch('/list')
+                        .then(res => res.json())
+                    this.list = list
+
+                },
+                handleSelct(src) {
+                    this.curr = 'mmd/' + src
+                    // this.video.src = e.target.href
+                    console.log(this.curr);
+                    // player.load(this.curr)
+                    return false
+                },
+                async initPlayer() {
+                    // Create a Player instance.
+                    // const player = new shaka.Player(this.$refs.video);
+
+                    // Attach player to the window to make it easy to access in the JS console.
+                    // window.player = player;
+
+                    // Listen for error events.
+                    // player.addEventListener('error', 'errorrr');
+
+                    // Try to load a manifest.
+                    // This is an asynchronous process.
+                    // try {
+                    //     await player.load(manifestUri);
+                    //     // This runs if the asynchronous load is successful.
+                    //     console.log('The video has now been loaded!');
+                    // } catch (e) {
+                    //     // onError is executed if the asynchronous load fails.
+                    //     onError(e);
+                    // }
+                }
+            },
+
+            created() {
+                this.init()
+            },
+            mounted() {
+                // shaka.polyfill.installAll();
+
+                // // Check to see if the browser supports the basic APIs Shaka needs.
+                // if (shaka.Player.isBrowserSupported()) {
+                //     // Everything looks good!
+                //     this.initPlayer();
+                // } else {
+                //     // This browser does not have the minimum set of APIs we need.
+                //     console.error('Browser not supported!');
+                // }
+            }
+        })
+
+    </script>
+</body>
+
+</html>
